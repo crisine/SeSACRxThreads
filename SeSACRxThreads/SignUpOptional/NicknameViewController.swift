@@ -15,7 +15,7 @@ class NicknameViewController: UIViewController {
     let nicknameTextField = SignTextField(placeholderText: "닉네임을 입력해주세요")
     let nextButton = PointButton(title: "다음")
     
-    private let sampleNickname = Observable.just("고래밥")
+    private let sampleNickname = BehaviorSubject(value: "고래밥")
     
     private let disposeBag = DisposeBag()
     
@@ -32,8 +32,11 @@ class NicknameViewController: UIViewController {
                 owner.navigationController?.pushViewController(BirthdayViewController(), animated: true)
             }
             .disposed(by: disposeBag)
-        
-        sampleNickname.bind(onNext: nicknameTextField.rx.text).disposed(by: disposeBag)
+                
+        sampleNickname
+            .bind(with: self) { owner, value in
+                owner.nicknameTextField.text = value
+            }.disposed(by: disposeBag)
     }
     
     func configureLayout() {
